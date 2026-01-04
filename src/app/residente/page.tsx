@@ -9,14 +9,12 @@ export default function ResidentePage() {
   const { userData, loading, isRole } = useAuth()
   const router = useRouter()
 
-  // 1. SEGURIDAD: Redirigir si no es un alumno/residente logueado
   useEffect(() => {
     if (!loading && !isRole('residente')) {
-      router.push('/unauthorized')
+      router.push('/')
     }
   }, [loading, userData, router, isRole])
 
-  // 2. ESTADO DE CARGA: Mientras se recupera el perfil de Firestore
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
@@ -99,14 +97,24 @@ export default function ResidentePage() {
                 <p className="text-sm text-slate-600 leading-relaxed font-medium">{paso.descripcion}</p>
 
                 {/* Botones de acción dinámicos */}
-                {paso.id === 2 && paso.estado === 'en-progreso' && (
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    <Link href="/residente/banco" className="btn-ito text-[11px] uppercase tracking-wider">
-                      Explorar Banco
-                    </Link>
-                    <Link href="/residente/propuesta" className="border-2 border-ito-azul text-ito-azul font-bold px-4 py-2 rounded-lg text-[11px] uppercase tracking-wider hover:bg-ito-azul hover:text-white transition-all">
-                      Subir Propuesta Propia
-                    </Link>
+                {paso.id === 2 && (
+                  <div className="mt-5 space-y-4">
+                    {/* Botones de acción (Mapeo de la maqueta) */}
+                    <div className="flex flex-wrap gap-3">
+                      <Link href="/residente/banco" className="bg-ito-azul text-white px-4 py-2 rounded-lg text-[11px] font-bold uppercase hover:bg-ito-azul/90 transition-all">
+                        Explorar Banco
+                      </Link>
+                      <Link href="/residente/propuesta" className="border-2 border-ito-azul text-ito-azul px-4 py-2 rounded-lg text-[11px] font-bold uppercase hover:bg-ito-azul/5 transition-all">
+                        Subir Propuesta
+                      </Link>
+                    </div>
+
+                    {/* Ejemplo de Proyecto ya seleccionado (Visual) */}
+                    <div className="p-4 bg-slate-50 border-l-4 border-ito-dorado rounded-r-xl">
+                      <p className="text-[9px] font-black text-ito-dorado uppercase tracking-[0.2em] mb-1">Proyecto Seleccionado</p>
+                      <h4 className="text-sm font-bold text-slate-800">Optimización de Redes Neuronales para Clasificación de Datos</h4>
+                      <p className="text-xs text-slate-500 font-medium">Empresa: Tech Solutions S.A. de C.V.</p>
+                    </div>
                   </div>
                 )}
                 

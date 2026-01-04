@@ -22,7 +22,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!loading && !isRole('admin')) {
-      router.push('/unauthorized')
+      router.push('/')
     }
   }, [loading, userData, router, isRole])
 
@@ -228,7 +228,7 @@ export default function AdminPage() {
           </section>
 
           <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 className="text-sm font-black mb-4 text-ito-azul uppercase tracking-widest">Proyectos en Sistema</h2>
+            <h2 className="text-sm font-black mb-4 text-ito-azul uppercase tracking-widest">Proyectos en el Sistema</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {proyectos.map(p => (
                 <div key={p.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center text-black">

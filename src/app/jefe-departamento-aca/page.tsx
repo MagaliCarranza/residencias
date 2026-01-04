@@ -17,7 +17,7 @@ export default function JefeDepartamentoPage() {
   // 1. PROTECCIÓN DE RUTA
   useEffect(() => {
     if (!loading && !isRole('jefe departamento academico')) {
-      router.push('/unauthorized')
+      router.push('/')
     }
   }, [loading, userData, router, isRole])
 
