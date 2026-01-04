@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* colores del ITO */
+@theme {
+  --color-ito-azul: #1e355e;
+  --color-ito-dorado: #b89032;
+  --color-ito-gris: #f4f4f4;
+  --color-ito-oro-luz: #d4ac0d;
+}
+
+:root {
+  --background: #f4f4f4;
+  --foreground: #1e355e;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Clases de utilidad personalizadas */
+@utility btn-ito {
+  background-color: var(--color-ito-azul);
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  
+  &:hover {
+    background-color: var(--color-ito-dorado);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+}
+
+/* Estilo para los inputs de la plataforma */
+input, select, textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  color: #1e293b;
+  outline: none;
+  
+  &:focus {
+    ring: 2px;
+    ring-color: var(--color-ito-dorado);
+  }
+}
