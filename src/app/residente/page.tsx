@@ -79,7 +79,6 @@ export default function ResidentePage() {
                 {paso.estado === 'bloqueado' && <LockClosedIcon className="w-7 h-7 text-slate-400" />}
               </div>
 
-              {/* Contenido del Paso */}
               <div className={`ml-6 p-6 rounded-2xl border flex-1 transition-all ${
                 paso.estado === 'bloqueado' ? 'bg-slate-50/50 border-slate-100 opacity-60' : 'bg-white border-slate-200 shadow-sm'
               }`}>
@@ -96,10 +95,8 @@ export default function ResidentePage() {
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed font-medium">{paso.descripcion}</p>
 
-                {/* Botones de acción dinámicos */}
                 {paso.id === 2 && (
                   <div className="mt-5 space-y-4">
-                    {/* Botones de acción (Mapeo de la maqueta) */}
                     <div className="flex flex-wrap gap-3">
                       <Link href="/residente/banco" className="bg-ito-azul text-white px-4 py-2 rounded-lg text-[11px] font-bold uppercase hover:bg-ito-azul/90 transition-all">
                         Explorar Banco
@@ -109,7 +106,7 @@ export default function ResidentePage() {
                       </Link>
                     </div>
 
-                    {/* Ejemplo de Proyecto ya seleccionado (Visual) */}
+              
                     <div className="p-4 bg-slate-50 border-l-4 border-ito-dorado rounded-r-xl">
                       <p className="text-[9px] font-black text-ito-dorado uppercase tracking-[0.2em] mb-1">Proyecto Seleccionado</p>
                       <h4 className="text-sm font-bold text-slate-800">Optimización de Redes Neuronales para Clasificación de Datos</h4>

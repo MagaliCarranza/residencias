@@ -106,13 +106,16 @@ export default function RegistroPage() {
               required
             >
               <option value="">Selecciona tu programa académico</option>
-              <option value="Ing. en Sistemas Computacionales">Ing. en Sistemas Computacionales</option>
-              <option value="Ing. en Gestión Empresarial">Ing. en Gestión Empresarial</option>
-              <option value="Ing. Industrial">Ing. Industrial</option>
-              <option value="Ing. Química">Ing. Química</option>
-              <option value="Ing. Química">Ing. Mecánica</option>
-              <option value="Ing. Química">Ing. Electrónica</option>
-              <option value="Ing. Química">Ing. Eléctrica</option>
+              <option value="Sistemas Computacionales">Ing. en Sistemas Computacionales</option>
+              <option value="Gestión Empresarial">Ing. en Gestión Empresarial</option>
+              <option value="Civil">Ing. Civil</option>
+              <option value="Industrial">Ing. Industrial</option>
+              <option value="Química">Ing. Química</option>
+              <option value="Mecanica">Ing. Mecánica</option>
+              <option value="Electronica">Ing. Electrónica</option>
+              <option value="Electrica">Ing. Eléctrica</option>
+              <option value="Administracion">Administración</option>
+              <option value="Contaduria">Contaduría Pública</option>
             </select>
           </div>
 

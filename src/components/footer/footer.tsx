@@ -24,7 +24,7 @@ export function Footer() {
               </div>
               <div>
                 <h3 className="text-sm font-bold leading-tight">Instituto Tecnológico de Oaxaca</h3>
-                <p className="text-[10px] text-[#b89032] font-bold uppercase tracking-wider">Excelencia Académica</p>
+                <p className="text-[10px] text-[#b89032] font-bold uppercase tracking-wider">TECNOLÓGICO NACIONAL DE MÉXICO</p>
               </div>
             </div>
             <p className="text-xs text-gray-300 leading-relaxed italic">
@@ -69,9 +69,9 @@ export function Footer() {
                 <Facebook className="w-4 h-4" />
               </a>
             </div>
-            <a href="https://oaxaca.tecnm.mx" target="_blank" className="flex items-center gap-2 text-xs text-gray-300 hover:text-white">
+            <a href="https://www.oaxaca.tecnm.mx/" target="_blank" className="flex items-center gap-2 text-xs text-gray-300 hover:text-white">
               <Globe className="w-4 h-4 text-[#b89032]" />
-              <span>itoaxaca.edu.mx</span>
+              <span>oaxaca.tecnm.mx</span>
             </a>
           </div>
         </div>

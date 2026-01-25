@@ -20,7 +20,7 @@ export function HeaderLogueado() {
     if (isRole("admin")) return "Panel Administrador"
     if (isRole("jefe division de estudios")) return "Panel División de Estudios"
     if (isRole("jefe departamento academico")) return "Panel Jefatura Académica"
-    if (isRole("residente")) return "Panel de Residente"
+    if (isRole("residente")) return "Panel de Alumno"
     return "Panel de Usuario"
   }
 
@@ -30,7 +30,7 @@ export function HeaderLogueado() {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => alert("Menú lateral próximamente")} // Aquí iría tu SideMenu
+              onClick={() => alert("Menú lateral próximamente")} // Aquí SideMenu 
               className="p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
             >
               <Menu className="h-5 w-5" />

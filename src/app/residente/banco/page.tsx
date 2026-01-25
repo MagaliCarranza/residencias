@@ -18,7 +18,7 @@ export default function BancoProyectos() {
               <span className="text-green-600 text-[9px] font-black uppercase tracking-widest">Disponible</span>
             </div>
             <h3 className="font-bold text-slate-800 text-lg mb-1">{p.titulo}</h3>
-            <p className="text-slate-500 text-sm mb-6 font-medium">🏢 {p.empresa}</p>
+            <p className="text-slate-500 text-sm mb-6 font-medium">{p.empresa}</p>
             <button className="w-full py-3 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl group-hover:bg-ito-azul transition-colors">
               Postularme al Proyecto
             </button>

@@ -67,7 +67,7 @@ export default function HomePage() {
 
       <section className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100 flex flex-col md:row gap-8 items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold text-[#1e355e] mb-2">¿Eres Jefe de Área o Docente?</h3>
+          <h3 className="text-2xl font-bold text-[#1e355e] mb-2">¿Eres Personal Administrativo?</h3>
           <p className="text-slate-600 max-w-md">
             Accede con tus credenciales institucionales para gestionar validaciones, proyectos y asesorías.
           </p>

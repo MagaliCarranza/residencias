@@ -16,7 +16,7 @@ export function HeaderPrincipal() {
             </div>
             <div className="flex flex-col border-l pl-4 border-slate-200">
               <h1 className="text-sm font-bold text-ito-azul leading-tight">TecNM Campus Oaxaca</h1>
-              <p className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Excelencia Académica</p>
+              <p className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">TECNOLÓGICO NACIONAL DE MÉXICO</p>
             </div>
           </div>
 
