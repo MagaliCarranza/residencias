@@ -14,36 +14,40 @@ export default function LoginPage() {
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
     try {
-      const res = await signInWithEmailAndPassword(auth, email, pass)
-      const userDoc = await getDoc(doc(db, "usuarios", res.user.uid))
+      const res = await signInWithEmailAndPassword(auth, email, pass);
+      const userDoc = await getDoc(doc(db, "usuarios", res.user.uid));
       
-      if (userDoc.exists()) {
-        // Obtenemos el rol y lo normalizamos (minúsculas y sin espacios extra)
-        const rol = userDoc.data().rol.toLowerCase().trim()
-        
-        // Buscamos la ruta en nuestro objeto de configuración ROLE_ROUTES
-        // Si el rol no existe en el mapa, por defecto lo mandamos a /residente
-        const destination = ROLE_ROUTES[rol as keyof typeof ROLE_ROUTES] || '/residente'
-        
-        router.push(destination)
-      } else {
-        setError("El usuario no tiene un perfil configurado en el sistema.")
-        setLoading(false)
+      if (!userDoc.exists()) {
+        throw new Error("no-profile");
       }
-    } catch (err: any) {
-      setLoading(false)
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-        setError("Correo o contraseña incorrectos. Por favor, verifica tus datos.")
+
+      const data = userDoc.data();
+      const rol = data.rol?.toLowerCase().trim();
+      if (rol && ROLE_ROUTES[rol]) {
+        router.push(ROLE_ROUTES[rol]);
       } else {
-        setError("Error de conexión. Inténtalo de nuevo más tarde.")
+        setError("Tu cuenta no tiene un rol válido asignado. Contacta al administrador.");
+        setLoading(false);
+      }
+
+    } catch (err: any) {
+      setLoading(false);
+      console.error("Login Error:", err.code); 
+
+      if (err.message === "no-profile") {
+        setError("No se encontró un perfil para esta cuenta.");
+      } else if (err.code?.includes('auth/')) {
+        setError("Credenciales inválidas. Revisa tu correo y contraseña.");
+      } else {
+        setError("Hubo un problema al conectar con el servidor.");
       }
     }
-  }
+  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -100,7 +104,7 @@ export default function LoginPage() {
 
         <div className="text-center mt-8 pt-6 border-t border-slate-100">
           <p className="text-xs text-slate-500 font-medium">
-            ¿Eres alumno y no tienes cuenta?
+            ¿No tienes cuenta?
           </p>
           <button 
             onClick={() => router.push('/registro')}

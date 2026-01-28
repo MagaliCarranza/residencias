@@ -18,16 +18,17 @@ export default function AsesorInternoPage() {
   const [fetching, setFetching] = useState(true)
 
   useEffect(() => {
-    if (!loading && !isRole('asesor interno')) {
-      router.push('/')
+    if (!loading) {
+      if (!isRole('asesor interno')) {
+        router.push('/')
+      }
     }
-  }, [loading, userData, router, isRole])
+  }, [loading, userData, isRole])
 
   useEffect(() => {
     const fetchResidentesAsignados = async () => {
       if (!userData?.uid) return
       try {
-        // Buscamos en la colección usuarios a los residentes que tengan el ID de este asesor
         const q = query(
           collection(db, "usuarios"), 
           where("rol", "==", "residente"),
@@ -57,7 +58,7 @@ export default function AsesorInternoPage() {
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-4 animate-in fade-in duration-700 space-y-8">
-      {/* HEADER PERSONALIZADO */}
+    
       <header className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-4">
           <div className="bg-ito-azul/10 p-3 rounded-2xl">

@@ -2,12 +2,19 @@
 import { useState } from 'react'
 import { auth, db } from '@/firebase/config'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+// 1. Importamos serverTimestamp
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 
 export default function RegistroPage() {
   const [formData, setFormData] = useState({ 
-    nombre: '', control: '', carrera: '', email: '', pass: '', confirmPass: '' 
+    nombre: '', 
+    control: '', 
+    carrera: '', 
+    email: '', 
+    pass: '', 
+    confirmPass: '',
+    rol: 'alumno' 
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -17,46 +24,40 @@ export default function RegistroPage() {
     e.preventDefault()
     setError(null)
 
-    // Validaciones básicas
     if (formData.pass !== formData.confirmPass) {
       setError("Las contraseñas no coinciden.")
       return
     }
-    if (formData.pass.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.")
-      return
-    }
-
+    
     setLoading(true)
 
     try {
-      // 1. Crear usuario en Auth
       const res = await createUserWithEmailAndPassword(auth, formData.email, formData.pass)
 
-      // 2. Crear perfil en Firestore
-      await setDoc(doc(db, "usuarios", res.user.uid), {
+      // 2. Creamos el objeto con serverTimestamp()
+      const userProfile: any = {
         nombre: formData.nombre,
-        numeroControl: formData.control,
-        carrera: formData.carrera,
-        rol: 'residente',
+        rol: formData.rol,
         email: formData.email,
-        estatusAcademico: { 
-          creditos80: false, 
-          servicioSocial: false 
-        },
-        fechaRegistro: new Date().toISOString()
-      })
+        fechaRegistro: serverTimestamp() // Genera la fecha oficial del servidor
+      }
 
-      router.push('/residente')
+      if (formData.rol === 'alumno') {
+        userProfile.numeroControl = formData.control
+        userProfile.carrera = formData.carrera
+        userProfile.estatusAcademico = { creditos80: false, servicioSocial: false }
+      } else {
+        userProfile.departamento = formData.carrera 
+      }
+
+      await setDoc(doc(db, "usuarios", res.user.uid), userProfile)
+
+      router.push(formData.rol === 'alumno' ? '/residente' : '/asesorInterno')
+      
     } catch (err: any) {
       setLoading(false)
-      if (err.code === 'auth/email-already-in-use') {
-        setError("Este correo ya está registrado en la plataforma.")
-      } else if (err.code === 'auth/invalid-email') {
-        setError("El formato del correo electrónico no es válido.")
-      } else {
-        setError("Ocurrió un error al crear la cuenta. Inténtalo de nuevo.")
-      }
+      console.error(err)
+      setError("Error al crear la cuenta. Inténtalo de nuevo.")
     }
   }
 
@@ -64,66 +65,84 @@ export default function RegistroPage() {
     <div className="min-h-[90vh] flex items-center justify-center p-4 py-12">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg border border-slate-100">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-black text-ito-azul uppercase tracking-tighter">Registro de Alumno</h2>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Residencias</p>
+          <h2 className="text-2xl font-black text-ito-azul uppercase tracking-tighter">
+            Registro de {formData.rol === 'alumno' ? 'Alumno' : 'Asesor Interno'}
+          </h2>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Plataforma de Residencias</p>
+        </div>
+
+        {/* Selector de Rol */}
+        <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+          <button 
+            type="button"
+            onClick={() => setFormData({...formData, rol: 'alumno'})}
+            className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg transition-all ${formData.rol === 'alumno' ? 'bg-white shadow-sm text-ito-azul' : 'text-slate-500'}`}
+          >Alumno</button>
+          <button 
+            type="button"
+            onClick={() => setFormData({...formData, rol: 'asesor interno'})}
+            className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg transition-all ${formData.rol === 'asesor interno' ? 'bg-white shadow-sm text-ito-azul' : 'text-slate-500'}`}
+          >Asesor Interno</button>
         </div>
 
         <form onSubmit={handleRegistro} className="space-y-5">
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded animate-in fade-in">
+            <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded">
               <p className="text-[11px] font-bold text-red-700 leading-tight">{error}</p>
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-black">
+          <div className={`grid grid-cols-1 ${formData.rol === 'alumno' ? 'md:grid-cols-2' : ''} gap-4 text-black`}>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Nombre Completo</label>
               <input 
                 type="text" 
-                placeholder="Nombre Apellidos"
                 className="w-full text-sm border-slate-200" 
                 onChange={e => setFormData({...formData, nombre: e.target.value})} 
                 required 
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Número de Control</label>
-              <input 
-                type="text" 
-                placeholder="8 dígitos"
-                className="w-full text-sm border-slate-200" 
-                onChange={e => setFormData({...formData, control: e.target.value})} 
-                required 
-              />
-            </div>
+            
+            {formData.rol === 'alumno' && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Número de Control</label>
+                <input 
+                  type="text" 
+                  className="w-full text-sm border-slate-200" 
+                  onChange={e => setFormData({...formData, control: e.target.value})} 
+                  required 
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-1 text-black">
-            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Carrera</label>
+            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+              {formData.rol === 'alumno' ? 'Carrera' : 'Departamento Adscrito'}
+            </label>
             <select 
               className="w-full text-sm border-slate-200 bg-white" 
               onChange={e => setFormData({...formData, carrera: e.target.value})} 
               required
             >
-              <option value="">Selecciona tu programa académico</option>
-              <option value="Sistemas Computacionales">Ing. en Sistemas Computacionales</option>
-              <option value="Gestión Empresarial">Ing. en Gestión Empresarial</option>
-              <option value="Civil">Ing. Civil</option>
-              <option value="Industrial">Ing. Industrial</option>
-              <option value="Química">Ing. Química</option>
-              <option value="Mecanica">Ing. Mecánica</option>
-              <option value="Electronica">Ing. Electrónica</option>
-              <option value="Electrica">Ing. Eléctrica</option>
+              <option value="">Selecciona...</option>
+              <option value="Sistemas Computacionales">Sistemas Computacionales</option>
+              <option value="Gestion Empresarial">Gestión Empresarial</option>
+              <option value="Civil">Civil</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Quimica">Química</option>
+              <option value="Mecanica">Mecánica</option>
+              <option value="Electronica">Electrónica</option>
+              <option value="Electrica">Eléctrica</option>
               <option value="Administracion">Administración</option>
-              <option value="Contaduria">Contaduría Pública</option>
+              <option value="Contaduria">Contaduría</option>
             </select>
           </div>
 
           <div className="space-y-1 text-black">
-            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Correo Institucional</label>
+            <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Correo</label>
             <input 
               type="email" 
-              placeholder="alumno@oaxaca.tecnm.mx"
               className="w-full text-sm border-slate-200" 
               onChange={e => setFormData({...formData, email: e.target.value})} 
               required 
@@ -135,17 +154,15 @@ export default function RegistroPage() {
               <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Contraseña</label>
               <input 
                 type="password" 
-                placeholder="••••••••"
                 className="w-full text-sm border-slate-200" 
                 onChange={e => setFormData({...formData, pass: e.target.value})} 
                 required 
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Confirmar Contraseña</label>
+              <label className="text-[10px] font-black text-slate-500 uppercase ml-1">Confirmar</label>
               <input 
                 type="password" 
-                placeholder="••••••••"
                 className="w-full text-sm border-slate-200" 
                 onChange={e => setFormData({...formData, confirmPass: e.target.value})} 
                 required 
@@ -156,26 +173,11 @@ export default function RegistroPage() {
           <button 
             type="submit" 
             disabled={loading}
-            className={`w-full btn-ito py-3 mt-4 font-black uppercase tracking-widest text-xs flex justify-center items-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className="w-full bg-ito-azul hover:bg-ito-dorado text-white py-3 mt-4 font-black uppercase tracking-widest text-xs flex justify-center items-center gap-2 rounded-lg transition-all"
           >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>Registrando...</span>
-              </>
-            ) : 'Crear Cuenta'}
+            {loading ? 'Procesando...' : 'Crear Cuenta'}
           </button>
         </form>
-
-        <div className="text-center mt-8 pt-6 border-t border-slate-100">
-          <p className="text-xs text-slate-500 font-medium">¿Ya tienes una cuenta registrada?</p>
-          <button 
-            onClick={() => router.push('/login')}
-            className="mt-2 text-ito-azul font-black text-xs uppercase tracking-widest hover:text-ito-dorado transition-colors"
-          >
-            Inicia Sesión Aquí
-          </button>
-        </div>
       </div>
     </div>
   )

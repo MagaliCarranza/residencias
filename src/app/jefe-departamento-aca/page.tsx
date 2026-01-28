@@ -474,8 +474,8 @@ export default function JefeDepartamentoPage() {
                       required
                     >
                       <option value="">Selecciona...</option>
-                      <option value="Sistemas Computacionales">Sistemas</option>
-                      <option value="Gestion Empresarial">Gestión</option>
+                      <option value="Sistemas Computacionales">Sistemas Computacionales</option>
+                      <option value="Gestion Empresarial">Gestión Empresarial</option>
                       <option value="Civil">Civil</option>
                       <option value="Industrial">Industrial</option>
                       <option value="Quimica">Química</option>
@@ -538,9 +538,16 @@ export default function JefeDepartamentoPage() {
                 </select>
                 <select className="text-xs border p-2 rounded-md" onChange={(e) => setFiltroCarrera(e.target.value)}>
                   <option value="todos">Cualquier Carrera</option>
-                  <option value="Sistemas">Sistemas</option>
-                  <option value="Gestion">Gestión</option>
+                  <option value="Sistemas Computacionales">Sistemas Computacionales</option>
+                  <option value="Gestion Empresarial">Gestión Empresarial</option>
+                  <option value="Civil">Civil</option>
                   <option value="Industrial">Industrial</option>
+                  <option value="Quimica">Química</option>
+                  <option value="Mecanica">Mecánica</option>
+                  <option value="Electronica">Electrónica</option>
+                  <option value="Electrica">Eléctrica</option>
+                  <option value="Administracion">Administración</option>
+                  <option value="Contaduria">Contaduría Pública</option>
                 </select>
                 <select className="text-xs border p-2 rounded-md" onChange={(e) => setFiltroEstatus(e.target.value)}>
                   <option value="todos">Cualquier Estatus</option>
@@ -614,64 +621,8 @@ export default function JefeDepartamentoPage() {
         </div>
       ) : (
         <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 text-black">
-        {/* FILA SUPERIOR: Formulario y Plantilla con proporciones originales */}
         <div className="grid lg:grid-cols-3 gap-8">
-            <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-              <h2 className="text-lg font-bold mb-4 text-ito-azul">Nuevo Asesor Interno</h2>
-              
-              <form onSubmit={handleCrearAsesor} className="space-y-4">
-                
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nombre Completo</label>
-                  <input 
-                    type="text" 
-                    placeholder="Ej. Juan Pérez López" 
-                    className="w-full text-sm border p-2 rounded focus:ring-2 focus:ring-ito-azul outline-none text-black" 
-                    value={nuevoAsesor.nombre} 
-                    onChange={e => setNuevoAsesor({...nuevoAsesor, nombre: e.target.value})} 
-                    required 
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Correo</label>
-                  <input 
-                    type="email" 
-                    placeholder="correo@gmail.com" 
-                    className="w-full text-sm border p-2 rounded focus:ring-2 focus:ring-ito-azul outline-none text-black" 
-                    value={nuevoAsesor.email} 
-                    onChange={e => setNuevoAsesor({...nuevoAsesor, email: e.target.value})} 
-                    required 
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Departamento Académico</label>
-                  <select 
-                    className="w-full text-sm border p-2 rounded bg-white focus:ring-2 focus:ring-ito-azul outline-none text-black" 
-                    value={nuevoAsesor.departamento} 
-                    onChange={e => setNuevoAsesor({...nuevoAsesor, departamento: e.target.value})} 
-                    required
-                  >
-                    <option value="">Selecciona un departamento...</option>
-                    <option value="Sistemas Computacionales">Sistemas Computacionales</option>
-                    <option value="Gestion Empresarial">Gestión Empresarial</option>
-                    <option value="Civil">Civil</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Quimica">Química</option>
-                    <option value="Mecanica">Mecánica</option>
-                    <option value="Electronica">Electrónica</option>
-                    <option value="Electrica">Eléctrica</option>
-                    <option value="Administracion">Administración</option>
-                    <option value="Contaduria">Contaduría Pública</option>
-                  </select>
-                </div>
-
-                <button className="w-full bg-ito-azul text-white py-2.5 rounded-lg font-bold uppercase text-xs shadow-md hover:bg-blue-900 transition-all mt-2">
-                  Registrar Asesor
-                </button>
-              </form>
-            </section>
+            
             <section className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <h2 className="text-lg font-bold mb-4">Plantilla de Asesores</h2>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -711,7 +662,7 @@ export default function JefeDepartamentoPage() {
             <div className="flex justify-between items-center mb-8 border-b pb-6">
               <div>
                 <h2 className="text-3xl font-black text-slate-800">Asignación de Asesores</h2>
-                <p className="text-sm text-slate-500">Residentes con 80% créditos y Servicio Social liberado.</p>
+                <p className="text-sm text-slate-500">Alumnos con 80% de créditos, Servicio Social liberado y acreditación de Actividades Complementarias.</p>
               </div>
               <div className="bg-ito-azul/5 px-6 py-3 rounded-xl border border-ito-azul/10 text-right">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Residentes</p>
@@ -758,7 +709,7 @@ export default function JefeDepartamentoPage() {
                           value={alumno.asesorInternoId || ""}
                           onChange={(e) => asignarAsesorAAlumno(alumno.id, e.target.value)}
                         >
-                          <option value="">Asignar...-</option>
+                          <option value="">Asignar...</option>
                           {asesoresDisponibles.map(as => <option key={as.id} value={as.id}>{as.nombre}</option>)}
                         </select>
                       </td>

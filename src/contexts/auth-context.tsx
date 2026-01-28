@@ -26,8 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // normaliza los textos para evitar errores por espacios o mayúsculas
   const isRole = (role: string) => {
-    if (!userData?.rol) return false;
-    return userData.rol.toLowerCase().trim() === role.toLowerCase().trim();
+    const rolActual = userData?.rol?.toString().toLowerCase().trim();
+    const rolBuscado = role.toLowerCase().trim();
+    return rolActual === rolBuscado;
   }
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const docSnap = await getDoc(docRef);
           
           if (docSnap.exists()) {
-            setUserData(docSnap.data());
+            setUserData({ uid: currentUser.uid, ...docSnap.data() });
           } else {
             setUserData(null);
           }

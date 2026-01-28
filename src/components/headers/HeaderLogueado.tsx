@@ -18,9 +18,11 @@ export function HeaderLogueado() {
 
   const getPanelTitle = () => {
     if (isRole("admin")) return "Panel Administrador"
-    if (isRole("jefe division de estudios")) return "Panel División de Estudios"
-    if (isRole("jefe departamento academico")) return "Panel Jefatura Académica"
-    if (isRole("residente")) return "Panel de Alumno"
+    if (isRole("jefe division de estudios")) return "Panel División de Estudios Profesionales"
+    if (isRole("jefe departamento academico")) return "Panel Departamento Académico"
+    if (isRole("residente")) return "Panel de Residente"
+    if (isRole("alumno")) return "Panel de Alumno"
+    if (isRole("asesor interno")) return "Panel de Asesor Interno"
     return "Panel de Usuario"
   }
 

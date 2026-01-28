@@ -4,6 +4,8 @@ export const ROLES = {
   DIVISION: 'jefe division de estudios',
   ACADEMICO: 'jefe departamento academico',
   RESIDENTE: 'residente',
+  ALUMNO: 'alumno',
+  ASESOR_INTERNO: 'asesor interno',
 };
 
 export const ROLE_ROUTES = {
@@ -14,6 +16,8 @@ export const ROLE_ROUTES = {
   [ROLES.DIVISION]: '/jefe-division',
   [ROLES.ACADEMICO]: '/jefe-departamento-aca',
   [ROLES.RESIDENTE]: '/residente',
+  [ROLES.ALUMNO]: '/residente',
+  [ROLES.ASESOR_INTERNO]: '/asesorInterno',
 };
 
 // Rutas que no requieren login

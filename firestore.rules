@@ -13,34 +13,29 @@ service cloud.firestore {
     }
 
     // Funciones de Rol
+    function isAlumno() { return getUserData().rol == 'alumno'; }
+    function isResidente() { return getUserData().rol == 'residente'; }
     function isRoot() { return getUserData().rol == 'root'; }
     function isAdmin() { return getUserData().rol == 'admin'; }
     function isJefe() { return getUserData().rol == 'jefe departamento academico'; }
+    function isJefeDiv() { return getUserData().rol == 'jefe division de estudios'; }
+    function isAsesorInt() { return getUserData().rol == 'asesor interno'; }
 
     // --- REGLAS DE PROYECTOS ---
     match /proyectos/{proyectoId} {
       allow read: if isAuthenticated();
-      // Root, Admin y Jefe pueden gestionar proyectos
-      allow write: if isAuthenticated() && (isRoot() || isAdmin() || isJefe());
+      allow write: if isAuthenticated() && (isRoot() || isAdmin() || isJefe() || isJefeDiv() || isAlumno());
     }
 
-    // --- REGLAS DE USUARIOS ---
     match /usuarios/{userId} {
-      // Lectura: Cualquier involucrado o jerarquía superior
-      allow read: if isAuthenticated() && (request.auth.uid == userId || isRoot() || isAdmin() || isJefe());
-      
-      // Actualización 
-      // - El usuario su propio perfil.
-      // - Root y Admin control general.
-      // - Jefe solo para asignar asesores o gestionar sus datos.
-      allow update: if isAuthenticated() && (request.auth.uid == userId || isRoot() || isAdmin() || isJefe());
+      allow read: if isAuthenticated() && request.auth.uid == userId;
 
-      // Creación 
-      // - El Jefe puede crear asesores. Root y Admin pueden crear usuarios.
-      allow create: if isAuthenticated() && (isRoot() || isAdmin() || isJefe());
+      allow update: if isAuthenticated() && (
+        request.auth.uid == userId || isRoot() || isAdmin() || isJefe() || isJefeDiv() || isAlumno() || isResidente()
+      );
 
-      // Eliminación
-      allow delete: if isAuthenticated() && (isRoot() || isAdmin() || isJefe());
+      allow create, delete: if isAuthenticated() && (isRoot() || isAdmin() || isJefe() || isJefeDiv());
     }
+    
   }
 }

@@ -1,20 +1,54 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { useRouter } from 'next/navigation'
-import { CheckCircleIcon, ClockIcon, LockClosedIcon } from '@heroicons/react/24/solid'
+import { db, storage } from '@/firebase/config' // exportar storage en  config
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { doc, updateDoc } from 'firebase/firestore'
+import { CheckCircleIcon, ClockIcon, LockClosedIcon, CloudArrowUpIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 
 export default function ResidentePage() {
   const { userData, loading, isRole } = useAuth()
   const router = useRouter()
+  const [uploading, setUploading] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!loading && !isRole('residente')) {
-      router.push('/')
+    if (!loading) {
+      if (!userData || !['alumno', 'residente'].includes(userData.rol)) {
+        router.push('/')
+      }
     }
-  }, [loading, userData, router, isRole])
+  }, [loading, userData, router])
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, tipoDoc: string) => {
+    const file = e.target.files?.[0]
+    if (!file || !userData?.uid) return
+
+    setUploading(tipoDoc)
+    try {
+      //Crear referencia en Storage
+      const storageRef = ref(storage, `expedientes/${userData.numeroControl}/${tipoDoc}.pdf`)
+      
+      // Subir archivo
+      await uploadBytes(storageRef, file)
+      const downloadURL = await getDownloadURL(storageRef)
+
+      // Actualizar Firestore
+      const userRef = doc(db, "usuarios", userData.uid)
+      await updateDoc(userRef, {
+        [`documentos.${tipoDoc}`]: downloadURL,
+        [`estatusAcademico.${tipoDoc}Subido`]: true
+      })
+
+      alert("Documento subido con éxito")
+    } catch (error) {
+      console.error("Error al subir:", error)
+      alert("Error al subir el archivo")
+    } finally {
+      setUploading(null)
+    }
+  }
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
@@ -24,14 +58,13 @@ export default function ResidentePage() {
     )
   }
 
-  if (!isRole('residente')) return null
-
-  // Lógica de pasos basada en los campos reales de tu Firestore
+  if (!['alumno', 'residente'].includes(userData?.rol)) return null
+  
   const pasos = [
     {
       id: 1,
       titulo: 'Validación de Requisitos',
-      descripcion: 'Revisión de 80% créditos y Servicio Social por División de Estudios.',
+      descripcion: 'Sube tu documentación oficial para revisión de División de Estudios Profesionales.',
       estado: userData?.estatusAcademico?.creditos80 && userData?.estatusAcademico?.servicioSocial ? 'completado' : 'en-progreso'
     },
     {
@@ -94,7 +127,60 @@ export default function ResidentePage() {
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed font-medium">{paso.descripcion}</p>
+                {paso.id === 1 && (
+                  <div className="mt-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { id: 'servicioSocial', label: 'Servicio Social' },
+                        { id: 'actividadesComp', label: 'Act. Complementarias' },
+                        { id: 'kardex80', label: 'Kardex (80% Créditos)' }
+                      ].map((docItem) => (
+                        <div key={docItem.id} className="flex flex-col gap-2">
+                          <label className={`relative flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
+                            userData?.documentos?.[docItem.id] 
+                              ? 'bg-green-50 border-green-200' 
+                              : 'bg-slate-50 border-slate-200 hover:border-ito-azul'
+                          }`}>
+                            {/* Indicador de estado */}
+                            {uploading === docItem.id ? (
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-ito-azul"></div>
+                            ) : userData?.documentos?.[docItem.id] ? (
+                              <CheckCircleIcon className="w-8 h-8 text-green-600" />
+                            ) : (
+                              <CloudArrowUpIcon className="w-8 h-8 text-slate-400" />
+                            )}
+                            
+                            <span className="text-[10px] font-black mt-2 text-slate-500 uppercase text-center leading-tight">
+                              {docItem.label}
+                            </span>
 
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              accept=".pdf"
+                              onChange={(e) => handleFileUpload(e, docItem.id)}
+                              disabled={!!uploading}
+                            />
+                          </label>
+                          
+                          {userData?.documentos?.[docItem.id] && (
+                            <a 
+                              href={userData.documentos[docItem.id]} 
+                              target="_blank" 
+                              className="text-[9px] text-center font-bold text-ito-azul hover:underline uppercase"
+                            >
+                              Ver documento subido
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <p className="text-[10px] text-slate-400 italic text-center">
+                      Solo se aceptan archivos PDF (Máx. *tamañoMB*)
+                    </p>
+                  </div>
+                )}
                 {paso.id === 2 && (
                   <div className="mt-5 space-y-4">
                     <div className="flex flex-wrap gap-3">
