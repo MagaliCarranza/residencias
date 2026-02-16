@@ -5,12 +5,12 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyBuU1cua3Rk3wodAfZ9cLXg9nfCXBEbNS0",
-  authDomain: "plataforma-residencias-6537c.firebaseapp.com",
-  projectId: "plataforma-residencias-6537c",
-  storageBucket: "plataforma-residencias-6537c.firebasestorage.app",
-  messagingSenderId: "643711150416",
-  appId: "1:643711150416:web:d2dfb4007f66a9f58c6455"
+  apiKey: "xx",
+  authDomain: "xx",
+  projectId: "xx",
+  storageBucket: "xx",
+  messagingSenderId: "xxx",
+  appId: "xx"
 };
 ;
 
